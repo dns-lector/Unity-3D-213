@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ToastScript : MonoBehaviour
@@ -36,6 +37,7 @@ public class ToastScript : MonoBehaviour
         {
             content.SetActive(false);
         }
+        GameState.SubscribeTrigger(BroadcastListener);
     }
 
     void Update()
@@ -59,6 +61,20 @@ public class ToastScript : MonoBehaviour
                 content.SetActive(true);
             }
         }
+    }
+
+    private void BroadcastListener(string type, object payload)
+    {
+        string[] toastedTypes = { "Battery" };
+        if (toastedTypes.Contains(type))
+        {
+            ShowToast($"{type} {payload?.ToString() ?? ""}");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        GameState.UnSubscribeTrigger(BroadcastListener);
     }
 
     private class ToastMessage

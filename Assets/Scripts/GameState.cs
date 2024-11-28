@@ -5,7 +5,6 @@ using UnityEngine;
 public class GameState
 {
     public static bool isFpv { get; set; }
-    public static float flashCharge { get; set; }
     public static Dictionary<string, bool> collectedKeys { get; } = 
         new Dictionary<string, bool>();
 
@@ -136,6 +135,63 @@ public class GameState
     }
     #endregion
 
+    #region Game events
+    // GameState.TriggerEvent(new Event{...} / raw data)  [Post Emit Raise Send Dispatch Trigger]
+    private const string broadcastKey = "Broadcast";
+    public static void TriggerEvent(string type, object payload = null)
+    {
+        if(eventListeners.ContainsKey(type))
+        {
+            foreach(var eventListener in eventListeners[type])
+            {
+                eventListener(type, payload);
+            }
+        }
+
+        if (eventListeners.ContainsKey(broadcastKey))
+        {
+            foreach (var eventListener in eventListeners[broadcastKey])
+            {
+                eventListener(type, payload);
+            }
+        }
+    }
+    private static Dictionary<String, List<Action<string, object>>> eventListeners = new();
+    
+    public static void SubscribeTrigger(Action<string, object> action, params string[] types)
+    {
+        if(types.Length == 0)
+        {
+            types = new string[1] { broadcastKey };
+        }
+        foreach (var type in types)
+        {
+            if(!eventListeners.ContainsKey(type))
+            {
+                eventListeners[type] = new List<Action<string, object>>();
+            }
+            eventListeners[type].Add(action);
+        }
+    }
+    public static void UnSubscribeTrigger(Action<string, object> action, params string[] types)
+    {
+        if (types.Length == 0)
+        {
+            types = new string[1] { broadcastKey };
+        }
+        foreach (var type in types)
+        {
+            if (eventListeners.ContainsKey(type))
+            {
+                eventListeners[type].Remove(action);
+                if(eventListeners[type].Count == 0)
+                {
+                    eventListeners.Remove(type);
+                }
+            }
+        }
+    }
+    #endregion
 }
 /* ChangeNotifier / Observer - ідея "активних" даних, коли зміна даних
  * формує повідомлення про цей факт

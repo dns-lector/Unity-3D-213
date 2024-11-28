@@ -16,7 +16,8 @@ public class BatteryScript : MonoBehaviour
     {
         if(other.gameObject.name == "Player")
         {
-            GameState.flashCharge = 1.0f;
+            // GameState.flashCharge = 1.0f;
+            GameState.TriggerEvent("Battery", Random.Range(0.5f, 1.0f));
             Destroy(gameObject);
         }
     }
