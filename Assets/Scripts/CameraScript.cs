@@ -21,13 +21,16 @@ public class CameraScript : MonoBehaviour
         mX = this.transform.eulerAngles.y;
         mY = this.transform.eulerAngles.x;
         lookAction = InputSystem.actions.FindAction("Look");
+        GameState.Subscribe(OnSensitivityChanged,
+            nameof(GameState.sensitivityLookX), 
+            nameof(GameState.sensitivityLookY));
     }
 
     private void Update()
     {
         if(fpv)
         {   // Завдання: обмежити максимальне віддалення камери від персонажа.
-            Vector2 mouseWheel = Input.mouseScrollDelta;
+            Vector2 mouseWheel = Input.mouseScrollDelta * Time.timeScale;
             if (mouseWheel.y != 0)
             {
                 if(c.magnitude > fpvRange)
@@ -58,7 +61,8 @@ public class CameraScript : MonoBehaviour
             }
             this.transform.eulerAngles = new Vector3(mY, mX, 0);
         }
-        if(Input.GetKeyDown(KeyCode.Tab))
+
+        if(Input.GetKeyDown(KeyCode.Tab) && Time.timeScale != 0.0f)
         {
             fpv = !fpv;
             if(!fpv)
@@ -76,6 +80,20 @@ public class CameraScript : MonoBehaviour
             this.transform.position = Quaternion.Euler(0,mX,0) * c + 
                 player.transform.position;
         }
+    }
+
+    private void OnSensitivityChanged()
+    {
+        // [0..0,5..1] -> [1..10..20] ([1..10,5..20])
+        sensitivityH = Mathf.Lerp(1, 20, GameState.sensitivityLookX);
+        sensitivityV = Mathf.Lerp(1, 20, GameState.sensitivityLookY);
+    }
+
+    private void OnDestroy()
+    {
+        GameState.UnSubscribe(OnSensitivityChanged,
+            nameof(GameState.sensitivityLookX),
+            nameof(GameState.sensitivityLookY));
     }
 }
 /* Д.З. Управління камерою

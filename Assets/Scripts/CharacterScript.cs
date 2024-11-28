@@ -4,11 +4,17 @@ public class CharacterScript : MonoBehaviour
 {
     private GameObject player;
     private Rigidbody playerRb;
+    private AudioSource ambientSound;
 
     void Start()
     {
         player = GameObject.Find("CharacterPlayer");
         playerRb = player.GetComponent<Rigidbody>();
+        ambientSound = GetComponent<AudioSource>();
+        GameState.Subscribe(OnAmbientVolumeChanged,
+            nameof(GameState.ambientVolume),
+            nameof(GameState.isMuted));
+        OnAmbientVolumeChanged();
     }
 
     void Update()
@@ -33,4 +39,21 @@ public class CharacterScript : MonoBehaviour
                 player.transform.eulerAngles.z);
         }*/
     }
+
+    private void OnAmbientVolumeChanged()
+    {
+        ambientSound.volume = GameState.isMuted ? 0.0f : GameState.ambientVolume;
+    }
+
+    private void OnDestroy()
+    {
+        GameState.UnSubscribe(OnAmbientVolumeChanged,
+            nameof(GameState.ambientVolume),
+            nameof(GameState.isMuted));
+    }
 }
+/* Д.З. Впровадити у проєкт фонову музику
+ * Реалізувати її циклічне відтворення
+ * Додати елементи управління налаштуванням гучності
+ * Перевірити дію "Вимкнути все"
+ */

@@ -61,7 +61,7 @@ public class KeyPointIndicatorScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.name == "Player")
+        if(other.name == "Player" && !content.activeInHierarchy)
         {
             content.SetActive(true);
             activeTime = 0.0f;
