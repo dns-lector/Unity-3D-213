@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class Door1Script : MonoBehaviour
 {
+    [SerializeField]
+    private string keyName = "1";
+
     private bool isOpen;
     private bool isLocked;
     private float inTimeTimeout = 2.0f;
@@ -38,23 +41,43 @@ public class Door1Script : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        //Debug.Log(collision.gameObject.name);
         if(collision.gameObject.name == "Player")
         {
-            if(GameState.collectedKeys.Keys.Contains("1"))
+            if(GameState.collectedKeys.Keys.Contains(keyName))
             {
-                bool isInTime = GameState.collectedKeys["1"];
-                timeout = isInTime ? inTimeTimeout : outTimeTimeout;
-                openTime = timeout;
-                isLocked = false;
-                ToastScript.ShowToast("Ключ \"1\" застосовано " +
-                    (isInTime ? "вчасно" : "не вчасно") );
-                openSound.Play();
+                if (isLocked)
+                {
+                    bool isInTime = GameState.collectedKeys[keyName];
+                    timeout = isInTime ? inTimeTimeout : outTimeTimeout;
+                    openTime = timeout;
+                    // ToastScript.ShowToast($"Ключ \"{keyName}\" застосовано ");
+                    GameState.TriggerEvent("Door", new TriggerPayload()
+                    {
+                        notification = $"Ключ \"{keyName}\" застосовано",
+                        payload = "Opened"
+                    });
+                    isLocked = false;
+                    openSound.Play();
+                }
             }
             else
             {
-                ToastScript.ShowToast("Для відкриття двері потрібен ключ \"1\"");
+                // ToastScript.ShowToast($"Для відкриття двері потрібен ключ \"{keyName}\"");
+                GameState.TriggerEvent("Door", new TriggerPayload()
+                {
+                    notification = $"Для відкриття двері потрібен ключ \"{keyName}\"",
+                    payload = "Close"
+                });
                 hitSound.Play();
             }            
         }
     }
 }
+/* Д.З. Реалізувати об'єкт "годинник", який дозволяє наступний ключ
+ * зібрати "вчасно" незалежно від реально пройденого часу.
+ * Розмістити на полі такий об'єкт
+ * Забезпечити передачу від нього ігрових подій
+ * Підписати на ці події скрипти, що відповідають за облік часу пошуку ключа
+ * Реалізувати описану функціональність.
+ */

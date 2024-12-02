@@ -14,11 +14,17 @@ public class KeyPointScript : MonoBehaviour
         get => _isKeyGot; 
         set {
             _isKeyGot = value;
-            if (value) GameState.collectedKeys.Add(keyName, isInTime); 
+            if (value)
+            {
+                GameState.collectedKeys.Add(keyName, isInTime);
+                GameState.TriggerEvent("KeyCollected", new TriggerPayload()
+                {
+                    notification = $"Ключ \"{keyName}\" знайдено " +
+                            (isInTime ? "вчасно" : "не вчасно"),
+                    payload = isInTime
+                });
+            }
         } 
     }
 }
-/* Д.З. Розмістити на ігровому полі декілька об'єктів типу "KeyPoint"
- * Реалізувати "двері", що відкриваються відповідними ключами
- * Забезпечити взаємодію - відкриття дверей за наявності відповідного ключа.
- */
+

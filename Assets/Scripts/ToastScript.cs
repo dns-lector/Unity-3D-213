@@ -70,6 +70,13 @@ public class ToastScript : MonoBehaviour
         {
             ShowToast($"{type} {payload?.ToString() ?? ""}");
         }
+
+        if (payload is TriggerPayload triggerPayload) {
+            if(triggerPayload.notification != null)
+            {
+                ShowToast(triggerPayload.notification);
+            }
+        }
     }
 
     private void OnDestroy()

@@ -142,17 +142,23 @@ public class GameState
     {
         if(eventListeners.ContainsKey(type))
         {
-            foreach(var eventListener in eventListeners[type])
+            lock (eventListeners[type])
             {
-                eventListener(type, payload);
+                foreach (var eventListener in eventListeners[type])
+                {
+                    eventListener(type, payload);
+                }
             }
         }
 
         if (eventListeners.ContainsKey(broadcastKey))
         {
-            foreach (var eventListener in eventListeners[broadcastKey])
+            lock (eventListeners)
             {
-                eventListener(type, payload);
+                foreach (var eventListener in eventListeners[broadcastKey])
+                {
+                    eventListener(type, payload);
+                }
             }
         }
     }

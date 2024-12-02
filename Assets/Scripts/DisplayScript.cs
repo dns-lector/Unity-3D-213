@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DisplayScript : MonoBehaviour
 {
     private TMPro.TextMeshProUGUI clock;
     private float gameTime;
+    private Image key1Image;
 
     void Start()
     {
@@ -11,6 +13,11 @@ public class DisplayScript : MonoBehaviour
         clock = transform
             .Find("Content/Background/ClockTMP")
             .GetComponent<TMPro.TextMeshProUGUI>();
+        key1Image = transform
+            .Find("Content/Background/Key1Image")
+            .GetComponent<Image>();
+
+        GameState.SubscribeTrigger(BroadcastTriggerListener);
     }
 
     void Update()
@@ -25,8 +32,21 @@ public class DisplayScript : MonoBehaviour
         int s = (int)gameTime % 60;
         clock.text = $"{h:D2}:{m:D2}:{s:D2}";
     }
+
+    private void BroadcastTriggerListener(string type, object payload)
+    {
+        switch (type)
+        {
+            case "KeyCollected":
+                key1Image.enabled = true;
+                Debug.Log(string.Join(",", GameState.collectedKeys.Keys));
+                break;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        GameState.UnSubscribeTrigger(BroadcastTriggerListener);
+    }
 }
-/* Д.З. Переробити систему збирання "ключів" (від дверей)
- * на ігрові повідомлення. Реалізувати відображення Toast-повідомлень
- * про одержання ключа (із зазначенням вчасності)
- */
+
