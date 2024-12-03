@@ -23,6 +23,14 @@ public class KeyPointScript : MonoBehaviour
                             (isInTime ? "вчасно" : "не вчасно"),
                     payload = isInTime
                 });
+
+                GameState.score += (isInTime ? 2 : 1) *
+                    (GameState.difficulty switch
+                    {
+                        GameState.GameDifficulty.Easy => 1,
+                        GameState.GameDifficulty.Hard => 3,
+                        _ => 2,
+                    });
             }
         } 
     }

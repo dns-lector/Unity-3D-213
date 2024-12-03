@@ -49,7 +49,13 @@ public class Door1Script : MonoBehaviour
                 if (isLocked)
                 {
                     bool isInTime = GameState.collectedKeys[keyName];
-                    timeout = isInTime ? inTimeTimeout : outTimeTimeout;
+                    timeout = (isInTime ? inTimeTimeout : outTimeTimeout) *
+                        (GameState.difficulty switch
+                        {
+                            GameState.GameDifficulty.Easy => 0.5f,
+                            GameState.GameDifficulty.Hard => 1.5f,
+                            _ => 1.0f,
+                        });
                     openTime = timeout;
                     // ToastScript.ShowToast($"Ключ \"{keyName}\" застосовано ");
                     GameState.TriggerEvent("Door", new TriggerPayload()

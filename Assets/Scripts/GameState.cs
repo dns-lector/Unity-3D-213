@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameState;
 
 public class GameState
 {
@@ -81,6 +82,44 @@ public class GameState
             {
                 _isMuted = value;
                 NotifySubscribers(nameof(isMuted));
+            }
+        }
+    }
+    #endregion
+
+    #region difficulty
+    private static GameDifficulty _difficulty = GameDifficulty.Middle;
+    public static GameDifficulty difficulty
+    {
+        get => _difficulty;
+        set
+        {
+            if (_difficulty != value)
+            {
+                _difficulty = value;
+                NotifySubscribers(nameof(difficulty));
+            }
+        }
+    }
+    public enum GameDifficulty
+    {
+        Easy,
+        Middle,
+        Hard
+    }
+    #endregion
+
+    #region score
+    private static int _score = 0;
+    public static int score
+    {
+        get => _score;
+        set
+        {
+            if (_score != value)
+            {
+                _score = value;
+                NotifySubscribers(nameof(score));
             }
         }
     }

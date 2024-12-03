@@ -36,7 +36,13 @@ public class KeyPointIndicatorScript : MonoBehaviour
     {
         if (content.activeInHierarchy)
         {
-            activeTime += Time.deltaTime;
+            activeTime += Time.deltaTime * 
+                (GameState.difficulty switch { 
+                    GameState.GameDifficulty.Easy => 0.5f,
+                    GameState.GameDifficulty.Hard => 1.5f,
+                    _ => 1.0f,
+                });
+
             if (activeTime >= keyTimeout)
             {
                 parentScript.isInTime = false;

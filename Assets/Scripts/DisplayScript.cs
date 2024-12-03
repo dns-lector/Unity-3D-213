@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class DisplayScript : MonoBehaviour
 {
     private TMPro.TextMeshProUGUI clock;
+    private TMPro.TextMeshProUGUI scoreTMP;
     private float gameTime;
     private Image key1Image;
 
@@ -12,6 +13,9 @@ public class DisplayScript : MonoBehaviour
         gameTime = 0.0f;
         clock = transform
             .Find("Content/Background/ClockTMP")
+            .GetComponent<TMPro.TextMeshProUGUI>();
+        scoreTMP = transform
+            .Find("Content/Background/ScoreTMP")
             .GetComponent<TMPro.TextMeshProUGUI>();
         key1Image = transform
             .Find("Content/Background/Key1Image")
@@ -23,6 +27,7 @@ public class DisplayScript : MonoBehaviour
     void Update()
     {
         gameTime += Time.deltaTime;
+        scoreTMP.text = GameState.score.ToString();
     }
 
     private void LateUpdate()
